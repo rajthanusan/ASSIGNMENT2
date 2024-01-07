@@ -40,13 +40,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         $checkResult = $database->query("SELECT * FROM book WHERE book_id='$book_id'");
         if ($checkResult->num_rows > 0) {
-            $_SESSION['message'] = "Book ID already exists";
+            $_SESSION['message'] = "Book ID already exists!";
             $_SESSION['msg_type'] = "danger";
         } elseif (!validate_book_id($book_id)) {
             $_SESSION['message'] = "Invalid Book ID format. Example: B001";
             $_SESSION['msg_type'] = "danger";
         } elseif (!validate_category_id($category_id)) {
-            $_SESSION['message'] = "Category ID not exists";
+            $_SESSION['message'] = "Category ID not exists!";
             $_SESSION['msg_type'] = "danger";
         } else {
             $database->query("INSERT INTO book (book_id, book_name, category_id) VALUES ('$book_id', '$book_name', '$category_id')")
