@@ -25,17 +25,28 @@ function validate_book_id($book_id) {
     return preg_match('/^B\d{3}$/', $book_id);
 }
 
+function validate_category_id($category_id) {
+    return in_array($category_id, array("C001", "C002"));
+}
+
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['add'])) {
-        
         $book_id = sanitize_input($_POST['book_id']);
         $book_name = sanitize_input($_POST['book_name']);
         $category_id = sanitize_input($_POST['category_id']);
 
         
-        if (!validate_book_id($book_id)) {
+        $checkResult = $database->query("SELECT * FROM book WHERE book_id='$book_id'");
+        if ($checkResult->num_rows > 0) {
+            $_SESSION['message'] = "Book ID already exists";
+            $_SESSION['msg_type'] = "danger";
+        } elseif (!validate_book_id($book_id)) {
             $_SESSION['message'] = "Invalid Book ID format. Example: B001";
+            $_SESSION['msg_type'] = "danger";
+        } elseif (!validate_category_id($category_id)) {
+            $_SESSION['message'] = "Category ID not exists";
             $_SESSION['msg_type'] = "danger";
         } else {
             $database->query("INSERT INTO book (book_id, book_name, category_id) VALUES ('$book_id', '$book_name', '$category_id')")
@@ -47,6 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: {$_SERVER['PHP_SELF']}");
         exit();
     }
+    
 
     if (isset($_POST['update'])) {
         
